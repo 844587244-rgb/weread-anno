@@ -1,4 +1,5 @@
-const normalizeAnnoText = text => text.replace(/[\s\u200b\u00ad]/g, '');
+const foldAnnoCharacter = character => character.normalize('NFKC').replace(/[\s\u200b\u00ad]/g, '');
+const normalizeAnnoText = text => text.split('').map(foldAnnoCharacter).join('');
 
 function annoTextIndex(root) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
@@ -18,12 +19,15 @@ function annoTextIndex(root) {
   while (walker.nextNode()) {
     const node = walker.currentNode;
     const offsets = [];
+    let value = '';
     for (let i = 0; i < node.length; i++) {
-      if (normalizeAnnoText(node.data[i])) offsets.push(i);
+      const folded = foldAnnoCharacter(node.data[i]);
+      value += folded;
+      for (let j = 0; j < folded.length; j++) offsets.push(i);
     }
-    if (offsets.length) {
-      segments.push({ node, offsets, from: text.length, to: text.length + offsets.length });
-      text += normalizeAnnoText(node.data);
+    if (value) {
+      segments.push({ node, offsets, from: text.length, to: text.length + value.length });
+      text += value;
     }
   }
   return { text, segments };

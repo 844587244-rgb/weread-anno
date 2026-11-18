@@ -8,6 +8,21 @@ const clean = value => typeof value === 'string' ? value.trim() : '';
 const normalize = value => value.replace(/[\s\u200b\u00ad]/g, '');
 const clip = (value, length) => clean(value).slice(0, length);
 
+function readingAnchor(paragraph, selected) {
+  const quote = clean(selected);
+  if (quote && normalize(paragraph).includes(normalize(quote))) {
+    if (normalize(quote).length >= 12) return clip(quote, 62);
+    const at = paragraph.indexOf(quote);
+    if (at >= 0) {
+      // Keep the selected words, widening the anchor on both sides when needed.
+      const start = Math.max(0, at - 12);
+      const end = Math.max(start + 24, at + quote.length);
+      return paragraph.slice(start, end).trim();
+    }
+  }
+  return clip(paragraph, 62);
+}
+
 export function registerWeReadExtension(app, { loadBook, generate = explainWithCodex }) {
   const jobs = new Map();
   let working = false;
@@ -37,7 +52,7 @@ export function registerWeReadExtension(app, { loadBook, generate = explainWithC
       const paragraph = paragraphs.get(annotation.paragraph_id);
       if (!parsed || !paragraph) continue;
       const selected = annotation.source_quote || highlights.get(annotation.highlight_id);
-      const quote = clip(selected && normalize(paragraph).includes(normalize(selected)) ? selected : paragraph, 62);
+      const quote = readingAnchor(paragraph, selected);
       // Short headings and repeated snippets are ambiguous on another edition.
       if (normalize(quote).length < 12) continue;
       notes.push({ id: annotation.id, mode: parsed[1], text: clip(parsed[2], 2500), quote });

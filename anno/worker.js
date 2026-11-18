@@ -21,13 +21,24 @@ async function request(path, data) {
 chrome.runtime.onMessage.addListener((message, sender, reply) => {
   if (sender.id !== chrome.runtime.id || message?.anno !== true) return false;
 
-  if (message?.type === 'reader-explain' || message?.type === 'reader-open') {
-    if (!sender.tab?.id || sender.frameId !== 0 ||
-        !/^https:\/\/weread\.qq\.com\/web\/reader\//.test(sender.url || '')) return false;
+  const reader = /^https:\/\/weread\.qq\.com\/web\/reader\/([^/?#]+)/.exec(sender.url || '');
+  const validReader = reader && sender.tab?.id && sender.frameId === 0;
+  if (message?.type === 'reader-marks' && validReader) {
+    const key = 'anno-book:' + reader[1].split('k')[0];
+    chrome.storage.local.get(key)
+      .then(values => values[key]?.link)
+      .then(link => typeof link === 'string' && idPattern.test(link)
+        ? request('/weread/notes/' + link) : { notes: [] })
+      .then(result => reply(result.notes), () => reply([]));
+    return true;
+  }
+
+  if (['reader-explain', 'reader-open', 'reader-note'].includes(message?.type)) {
+    if (!validReader) return false;
     const tabId = sender.tab.id;
     // Open synchronously while the original click retains user activation.
     const open = chrome.sidePanel.open({ tabId });
-    const draft = message.type === 'reader-explain' && message.passage;
+    const draft = message.type !== 'reader-open' && message.passage;
     const save = draft ? chrome.storage.session.set({ ['draft:' + tabId]: draft }) : Promise.resolve();
     Promise.all([open, save]).then(() => reply({ ok: true }), () => reply({
       error: '请先点 Chrome 工具栏里的「Anno 伴读」，再选中文字。',

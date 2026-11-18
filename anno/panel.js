@@ -76,6 +76,7 @@ function renderNotes(book, notes) {
   $('notes').replaceChildren(...notes.map(note => {
     const article = make('article');
     article.dataset.mode = note.mode;
+    article.dataset.noteId = note.id;
     article.append(make('div', note.mode + ' · AI 旁注', 'meta'), make('blockquote', note.quote),
       make('p', note.text, 'prose'));
     const actions = make('div', '', 'actions');
@@ -259,6 +260,14 @@ async function consumeDraft(book) {
   if (!passage || passage.key !== book.key || passage.actionId === book.lastAction || active !== book) return;
   book.lastAction = passage.actionId;
   await chrome.storage.session.remove(key);
+  if (passage.noteId) {
+    showView('notes');
+    await updateNotes(book);
+    const note = [...$('notes').children].find(card => card.dataset.noteId === passage.noteId);
+    note?.scrollIntoView({ block: 'nearest' });
+    note?.animate([{ outline: '2px solid #a8652e' }, { outline: '2px solid transparent' }], 1500);
+    return;
+  }
   const thread = addThread(book, passage);
   showView('threads');
   renderThreads();
@@ -284,6 +293,7 @@ async function refresh() {
       return;
     }
 
+    document.documentElement.dataset.theme = info.theme === 'dark' ? 'dark' : 'light';
     if (active?.key !== info.key || active?.tabId !== tab.id) {
       const key = 'anno-book:' + info.key;
       const stored = (await chrome.storage.local.get(key))[key];

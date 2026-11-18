@@ -1207,7 +1207,7 @@ function createUI() {
             </tbody>
           </table>
           <p style="font-size:12px;color:var(--wre-text);margin:12px 0 0;line-height:1.6;">
-            本插件默认开启<b>匿名使用统计</b>：仅上报「随机匿名标识 + 版本号 + 日期 + 事件名」，不含阅读数据 / 账号 / Key，可在「阅读设置」内一键关闭。
+            本版本默认关闭匿名使用统计，可在「阅读设置」中开启。
           </p>
           <div class="wre-shortcuts-footer">更多功能请点击左下角悬浮图标 → 查看菜单</div>
         </div>

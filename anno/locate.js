@@ -137,5 +137,39 @@ function findAnnoCanvasQuote(index, quote) {
       rects.push({ left, right, top: piece.y, bottom: piece.y + piece.h, width: right - left, height: piece.h });
     }
   }
-  return rects.length ? { left: index.left, rects } : null;
+  return rects.length ? { left: index.left, rects, start, end } : null;
+}
+
+// Canvas pages expose WeRead's visible selection rectangles, not a DOM text range.
+function findAnnoCanvasSelection(indexes, masks) {
+  const selections = [];
+  for (const index of indexes) {
+    let start = null;
+    let end = null;
+    let quote = '';
+    let previous = null;
+    for (const { piece, from } of index.segments) {
+      const chars = Array.from(piece.text);
+      const width = piece.w / chars.length;
+      const y = piece.y + piece.h / 2;
+      let offset = from;
+      for (const [i, character] of chars.entries()) {
+        const x = piece.x + (i + 0.5) * width;
+        const length = normalizeAnnoText(character).length;
+        if (masks.some(rect => x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)) {
+          if (start === null) start = offset;
+          if (previous && /[A-Za-z0-9]$/.test(quote) && /^[A-Za-z0-9]/.test(character) &&
+              (Math.abs(y - previous.y) > 8 || x - previous.x > 1.55 * Math.max(width, previous.width))) {
+            quote += ' ';
+          }
+          quote += character;
+          previous = { x, y, width };
+          end = offset + length;
+        }
+        offset += length;
+      }
+    }
+    if (start !== null && end !== null && quote.trim()) selections.push({ index, start, end, quote: quote.trim() });
+  }
+  return selections.length === 1 ? selections[0] : null;
 }

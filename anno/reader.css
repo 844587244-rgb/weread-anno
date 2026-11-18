@@ -16,3 +16,18 @@
   font-size: 12px;
   cursor: pointer;
 }
+
+/* Leave space within the reading page for the wide companion layout. */
+html.anno-page-rail .wr_horizontalReader_app_content,
+html.anno-page-rail .app_content:not(.wr_horizontalReader_app_content .app_content) {
+  width: calc(100% - 448px) !important;
+  max-width: calc(100% - 448px) !important;
+  margin-right: auto !important;
+  margin-left: 16px !important;
+  box-sizing: border-box;
+}
+
+html.anno-page-rail .readerChapterContent_container,
+html.anno-page-rail .readerChapterContent {
+  max-width: 100% !important;
+}

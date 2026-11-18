@@ -24,6 +24,19 @@
     /* 版本号拿不到就不显示，不影响链接使用 */
   }
 
+  let windowId;
+  chrome.windows.getCurrent().then(current => { windowId = current.id; }).catch(() => {});
+  document.getElementById('wre-pop-anno').addEventListener('click', async () => {
+    const status = document.getElementById('wre-pop-anno-status');
+    try {
+      await chrome.sidePanel.open({ windowId });
+      window.close();
+    } catch {
+      status.textContent = '请在微信读书页面点右下角「Anno 伴读」。';
+      status.hidden = false;
+    }
+  });
+
   // 360 安全浏览器 / 极速浏览器的 UA 带 360SE / 360EE，指向 360 商店；其余走 Edge 商店
   try {
     const review = document.getElementById('wre-pop-review');

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "__MSG_extensionName__",
-  "version": "0.32.0",
-  "description": "__MSG_extensionDescription__",
+  "name": "微信悦读 · Anno 伴读",
+  "version": "0.32.0.1",
+  "description": "微信读书划线回看、精读旁注和 AI 追问。基于微信悦读。",
   "default_locale": "zh_CN",
   "homepage_url": "https://reader.chesterlee.cn",
   "action": {
@@ -20,7 +20,8 @@
     "128": "icons/icon-128.png"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "sidePanel"
   ],
   "host_permissions": [
     "https://i.weread.qq.com/*",
@@ -31,7 +32,8 @@
     "https://ark.cn-beijing.volces.com/*",
     "https://api.siliconflow.cn/*",
     "https://reader.chesterlee.cn/*",
-    "https://*.tcloudbase.com/*"
+    "https://*.tcloudbase.com/*",
+    "http://127.0.0.1/*"
   ],
   "optional_host_permissions": [
     "https://*/*"
@@ -69,7 +71,8 @@
         "modules/backup.css",
         "modules/help.css",
         "modules/reviews.css",
-        "modules/sync-notes.css"
+        "modules/sync-notes.css",
+        "anno/reader.css"
       ],
       "js": [
         "modules/stats.js",
@@ -85,9 +88,15 @@
         "modules/help.js",
         "modules/reviews.js",
         "modules/telemetry.js",
-        "content.js"
+        "content.js",
+        "anno/locate.js",
+        "anno/reader.js"
       ],
       "run_at": "document_end"
     }
-  ]
+  ],
+  "minimum_chrome_version": "116",
+  "side_panel": {
+    "default_path": "anno/panel.html"
+  }
 }

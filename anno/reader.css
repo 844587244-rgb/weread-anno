@@ -1,0 +1,18 @@
+::highlight(anno-weread-quote) {
+  background: #d6a46266;
+  color: inherit;
+  text-decoration: underline dotted #aa6627;
+}
+
+#wre-notes-modal .wre-anno-note {
+  float: right;
+  margin: 0 0 4px 9px;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}

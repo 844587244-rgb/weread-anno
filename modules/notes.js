@@ -1074,16 +1074,21 @@
           // 想法优先用其引用的原文（abstract）定位；划线用划线原文
           text: item.kind === 'thought' ? (item.abstract || item.text || '') : (item.text || ''),
           chapterName: group.name || '',
+          quote: item.kind === 'thought' ? (item.abstract || '') : (item.text || ''),
+          readerNote: item.kind === 'thought' ? (item.text || '') : '',
         });
+        const annoBtn = jumpTargets[index].quote.trim().length >= 2 && jumpTargets[index].quote.trim().length <= 1600
+          ? '<button type="button" class="wre-anno-note" data-wre-anno-note="' + index + '">伴读</button>'
+          : '';
         const jumpAttr = ' data-wre-notes-jump="' + index + '" title="点击定位到原文（在当前页面查找这段内容）"';
         if (item.kind === 'thought') {
-          return '<div class="wre-notes-item is-thought"' + jumpAttr + '>' + listenBtn +
+          return '<div class="wre-notes-item is-thought"' + jumpAttr + '>' + listenBtn + annoBtn +
               (item.abstract ? '<div class="wre-notes-quote">' + escapeHtml(item.abstract) + '</div>' : '') +
               '<div class="wre-notes-thought">' + escapeHtml(item.text) + '</div>' +
               '<div class="wre-notes-meta">' + escapeHtml(formatDateTime(item.createTime)) + '</div>' +
             '</div>';
         }
-        return '<div class="wre-notes-item"' + jumpAttr + '>' + listenBtn +
+        return '<div class="wre-notes-item"' + jumpAttr + '>' + listenBtn + annoBtn +
             '<div class="wre-notes-text">' + escapeHtml(item.text) + '</div>' +
             (item.createTime ? '<div class="wre-notes-meta">' + escapeHtml(formatDateTime(item.createTime)) + '</div>' : '') +
           '</div>';
@@ -1297,6 +1302,12 @@
     if (tab) {
       panelTab = tab.getAttribute('data-wre-notes-tab');
       renderPanel();
+      return;
+    }
+    const annoBtn = event.target.closest('[data-wre-anno-note]');
+    if (annoBtn) {
+      const note = jumpTargets[Number(annoBtn.getAttribute('data-wre-anno-note'))];
+      globalThis.annoOpenWeReadNote?.(event, note);
       return;
     }
     const jumpEl = event.target.closest('[data-wre-notes-jump]');

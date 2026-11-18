@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Anno 伴读</title>
+  <link rel="stylesheet" href="panel.css">
+  <script defer src="panel.js"></script>
+</head>
+<body>
+  <header>
+    <div class="heading"><h1>Anno 伴读</h1><a href="http://127.0.0.1:18330/" target="_blank" rel="noreferrer">本地书架 ↗</a></div>
+    <p id="book">打开微信读书的一本书</p>
+  </header>
+  <main>
+    <p id="connection" role="status" hidden></p>
+    <section id="reading" hidden aria-label="伴读内容">
+      <nav aria-label="伴读视图">
+        <button id="show-notes" type="button" aria-pressed="true">本页旁注</button>
+        <button id="show-threads" type="button" aria-pressed="false">我的追问</button>
+      </nav>
+      <div id="notes-view">
+        <label class="link-book" for="book-link">关联本地书籍</label>
+        <select id="book-link"><option value="">选择一本书</option></select>
+        <p id="notes-status" class="hint" role="status">关联后会显示本页匹配到的旁注。</p>
+        <div id="notes"></div>
+      </div>
+      <div id="threads-view" hidden>
+        <p id="empty" class="hint">在正文选中文字，再点「解释」。</p>
+        <div id="threads"></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

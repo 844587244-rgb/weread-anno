@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 MANIFEST = ROOT / "manifest.json"
 RELEASE_DIR = ROOT / "release"
-PLUGIN_NAME = "weread-enhancer"
+PLUGIN_NAME = "weread-anno"
 
 
 def collect_runtime_files(manifest):
@@ -37,6 +37,14 @@ def collect_runtime_files(manifest):
 
     # Service Worker
     add(manifest.get("background", {}).get("service_worker"))
+
+    # Anno 的运行文件（含 Worker importScripts 和侧栏引用）
+    for source in sorted((ROOT / "anno").iterdir()):
+        if source.suffix in {".js", ".css", ".html"} and source.is_file():
+            add(source.relative_to(ROOT).as_posix())
+
+    add("LICENSE")
+    add("ANNO.md")
 
     # content_scripts 的 js / css（含 modules/ 新模块）
     for cs in manifest.get("content_scripts", []):

@@ -108,3 +108,5 @@ body {
   font-style: normal;
   color: var(--wre-text-soft);
 }
+
+button.wre-pop-btn { width: 100%; text-align: left; font: inherit; cursor: pointer; }

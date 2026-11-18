@@ -783,7 +783,10 @@ async function handleMessage(message) {
   return { ok: false, code: 'unknown', error: '未知的后台请求类型' };
 }
 
+importScripts('anno/worker.js');
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.anno === true) return false;
   handleMessage(message)
     .then(sendResponse)
     .catch((err) => {

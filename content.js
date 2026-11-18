@@ -15,7 +15,7 @@ const WRE_DEFAULT_STATE = {
     direction: 'down',
   },
   // M13：匿名使用统计（默认开启，可一键关闭；见 modules/telemetry.js）
-  telemetryEnabled: true,
+  telemetryEnabled: false,
   // 第 16 章 · B 档：插件自身界面外观档位（light 浅色 / dark 深色 / auto 跟随系统）
   theme: 'auto',
 };
